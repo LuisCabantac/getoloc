@@ -1,8 +1,13 @@
-import "./App.css";
+import { useState } from "react";
 import { useGeolocated } from "react-geolocated";
 
+import { Input } from "./components/ui/input";
+import { Label } from "./components/ui/label";
+import { Button } from "./components/ui/button";
+
 function App() {
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+  const [name, setName] = useState("");
+  const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
       positionOptions: {
         enableHighAccuracy: false,
@@ -10,37 +15,81 @@ function App() {
       userDecisionTimeout: 5000,
     });
 
+  const handleFileDownload = () => {
+    const element = document.createElement("a");
+    const file = new Blob(
+      [
+        `
+${name}
+
+Latitude:
+${coords?.latitude}
+
+Longitude:
+${coords?.longitude}
+
+Altitude:
+${coords?.altitude}
+
+`,
+      ],
+      {
+        type: "text/plain",
+      }
+    );
+    element.href = URL.createObjectURL(file);
+    element.download = `${name}.txt`;
+    document.body.appendChild(element);
+    element.click();
+  };
+
   return !isGeolocationAvailable ? (
-    <div>Your browser does not support Geolocation</div>
+    <p>Your browser does not support Geolocation</p>
   ) : !isGeolocationEnabled ? (
-    <div>Geolocation is not enabled</div>
+    <p>Geolocation is not enabled</p>
   ) : coords ? (
-    <table>
-      <tbody>
-        <tr>
-          <td>latitude</td>
-          <td>{coords.latitude}</td>
-        </tr>
-        <tr>
-          <td>longitude</td>
-          <td>{coords.longitude}</td>
-        </tr>
-        <tr>
-          <td>altitude</td>
-          <td>{coords.altitude}</td>
-        </tr>
-        <tr>
-          <td>heading</td>
-          <td>{coords.heading}</td>
-        </tr>
-        <tr>
-          <td>speed</td>
-          <td>{coords.speed}</td>
-        </tr>
-      </tbody>
-    </table>
+    <main className="mx-auto my-6 max-w-2xl px-6 flex justify-center items-center h-dvh">
+      <div className="grid gap-4 md:w-3xl">
+        <div className="grid gap-2">
+          <Label>Name</Label>
+          <Input
+            type="text"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label>Latitude</Label>
+          <Input type="text" value={coords?.latitude ?? ""} />
+        </div>
+        <div className="grid gap-2">
+          <Label>Longitude</Label>
+          <Input type="text" value={coords?.longitude ?? ""} />
+        </div>
+        <div className="grid gap-2">
+          <Label>Altitude</Label>
+          <Input type="text" value={coords?.altitude ?? ""} />
+        </div>
+        <Button
+          onClick={() => {
+            getPosition();
+          }}
+          className="rounded-full"
+        >
+          Get Current
+        </Button>
+        <Button
+          variant="outline"
+          className="rounded-full disabled:cursor-not-allowed"
+          onClick={handleFileDownload}
+          disabled={!name && !coords}
+        >
+          Download
+        </Button>
+      </div>
+    </main>
   ) : (
-    <div>Getting the location data&hellip; </div>
+    <p>Getting the location data&hellip; </p>
   );
 }
 

@@ -38,7 +38,7 @@ ${coords?.altitude}
       }
     );
     element.href = URL.createObjectURL(file);
-    element.download = `${name}.txt`;
+    element.download = `${name.replace(/[\\/:*?"<>|]/g, "_")}.txt`;
     document.body.appendChild(element);
     element.click();
   };

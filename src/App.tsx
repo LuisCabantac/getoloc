@@ -44,9 +44,13 @@ ${coords?.altitude}
   };
 
   return !isGeolocationAvailable ? (
-    <p>Your browser does not support Geolocation</p>
+    <p className="mx-auto my-6 max-w-2xl px-6 flex justify-center items-center h-dvh">
+      Your browser does not support Geolocation
+    </p>
   ) : !isGeolocationEnabled ? (
-    <p>Geolocation is not enabled</p>
+    <p className="mx-auto my-6 max-w-2xl px-6 flex justify-center items-center h-dvh">
+      Geolocation is not enabled
+    </p>
   ) : coords ? (
     <main className="mx-auto my-6 max-w-2xl px-6 flex justify-center items-center h-dvh">
       <div className="grid gap-4 md:w-3xl">
@@ -89,7 +93,9 @@ ${coords?.altitude}
       </div>
     </main>
   ) : (
-    <p>Getting the location data&hellip; </p>
+    <p className="mx-auto my-6 max-w-2xl px-6 flex justify-center items-center h-dvh">
+      Getting the location data&hellip;{" "}
+    </p>
   );
 }
 
